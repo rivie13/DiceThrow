@@ -13,6 +13,16 @@ class DieFragment : Fragment() {
     companion object {
         private const val DIE_SIDES_KEY = "sidenumber"
         private const val DIE_VALUE_KEY = "die_value"
+
+        // Factory method to create DieFragment with a specific number of sides
+        fun newInstance(numSides: Int = 6): DieFragment {
+            val fragment = DieFragment()
+            val args = Bundle().apply {
+                putInt(DIE_SIDES_KEY, numSides)
+            }
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     lateinit var dieTextView: TextView
