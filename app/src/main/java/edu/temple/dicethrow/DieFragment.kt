@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import kotlin.random.Random
 
 class DieFragment : Fragment() {
@@ -19,6 +20,8 @@ class DieFragment : Fragment() {
     var dieSides: Int = 6
     private var dieValue: Int = 0
 
+    lateinit var dieViewModel: DieViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -28,6 +31,7 @@ class DieFragment : Fragment() {
         if (savedInstanceState != null) {
             dieValue = savedInstanceState.getInt(DIE_VALUE_KEY, 0)
         }
+        dieViewModel = ViewModelProvider(this.requireActivity())[DieViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -43,26 +47,18 @@ class DieFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // If it's the first time, throw the die. Otherwise, display the saved value.
-        if (savedInstanceState == null) {
-            throwDie()
-        } else {
-            dieTextView.text = dieValue.toString()
+        dieViewModel.getCurrentRoll().observe(viewLifecycleOwner) {
+            dieValue = it
+            dieTextView.text = it.toString()
         }
-
-        view.setOnClickListener {
+        if (dieViewModel.getCurrentRoll().value == null) {
             throwDie()
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        // Save the current dieValue to the bundle
-        outState.putInt(DIE_VALUE_KEY, dieValue)
-    }
+
 
     fun throwDie() {
-        dieValue = Random.nextInt(dieSides) + 1
-        dieTextView.text = dieValue.toString()
+        dieViewModel.setCurrentRoll(Random.nextInt(dieSides) + 1)
     }
 }
