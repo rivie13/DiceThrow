@@ -52,13 +52,7 @@ class DieFragment : Fragment() {
             dieTextView.text = it.toString()
         }
         if (dieViewModel.getCurrentRoll().value == null) {
-            throwDie()
+            dieViewModel.rollDie()
         }
-    }
-
-
-
-    fun throwDie() {
-        dieViewModel.setCurrentRoll(Random.nextInt(dieSides) + 1)
     }
 }
